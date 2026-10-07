@@ -216,6 +216,32 @@ function renderView(ctx, W, H, L, px, py, face, o){
     }
   }
 
+  /* 宝箱：床に置かれた鉄枷つきの木箱。開いていれば蓋が後ろへ倒れている */
+  function chest(d,l,open){
+    const z0=d+0.34, z1=d+0.62, sl=2*l-1, u0=0.27, u1=0.73, hT=0.6;
+    const P=(z,u,h)=>[SX(z,sl+2*u), SY(z,h)];
+    const b=B(z0);
+    const fill=(pts,c)=>{ poly(pts); if(wire){ ctx.fillStyle='#000'; ctx.fill(); ctx.strokeStyle=rgb([215,215,215],b,[1,1,1]); ctx.lineWidth=LW(z0); ctx.stroke(); } else { ctx.fillStyle=c; ctx.fill(); ctx.strokeStyle=rgb(T.door,b*0.35); ctx.lineWidth=LW(z0)*0.9; ctx.stroke(); } };
+    const wood=T.door;
+    if(l>0) fill([P(z0,u0,1),P(z1,u0,1),P(z1,u0,hT),P(z0,u0,hT)], rgb(wood,b*0.6));
+    if(l<0) fill([P(z0,u1,1),P(z1,u1,1),P(z1,u1,hT),P(z0,u1,hT)], rgb(wood,b*0.6));
+    if(open){
+      fill([P(z0,u0,hT),P(z0,u1,hT),P(z1,u1,hT),P(z1,u0,hT)], rgb([20,14,10],b));
+      fill([P(z1,u0,hT),P(z1,u1,hT),P(z1+0.06,u1,hT-0.42),P(z1+0.06,u0,hT-0.42)], rgb(wood,b*0.75));
+    } else {
+      fill([P(z0,u0,hT),P(z0,u1,hT),P(z1,u1,hT),P(z1,u0,hT)], rgb(wood,b*1.15));
+    }
+    fill([P(z0,u0,1),P(z0,u1,1),P(z0,u1,hT),P(z0,u0,hT)], rgb(wood,b*0.95));
+    if(!wire){
+      ctx.strokeStyle=rgb([70,66,62],b*1.2,[1,1,1]); ctx.lineWidth=LW(z0)*1.8;
+      ctx.beginPath();
+      for(const u of [0.36,0.64]){ const a=P(z0,u,1), c=P(z0,u,hT); ctx.moveTo(a[0],a[1]); ctx.lineTo(c[0],c[1]); }
+      const a=P(z0,u0,hT+0.08), c=P(z0,u1,hT+0.08); ctx.moveTo(a[0],a[1]); ctx.lineTo(c[0],c[1]);
+      ctx.stroke();
+      if(!open){ const k=P(z0,0.5,hT+0.14), r=Math.max(1.5,LW(z0)*1.6); ctx.fillStyle=rgb([220,180,80],b,[1,1,1]); ctx.fillRect(k[0]-r,k[1]-r,r*2,r*2.4); }
+    }
+  }
+
   const order=[];
   for(let k=VIEW_LAT;k>=1;k--){ order.push(-k,k); }
   order.push(0);
@@ -243,6 +269,8 @@ function renderView(ctx, W, H, L, px, py, face, o){
       /* マスの中に立つ物は、そのマスの奥の壁より後に描く */
       if(L.down && L.down.x===x && L.down.y===y) stairs(d,l,'down');
       if(L.up && L.up.x===x && L.up.y===y) stairs(d,l,'up');
+      const ch=typeof chestAt==='function' ? chestAt(L,x,y) : null;
+      if(ch) chest(d,l,ch.opened);
     }
   }
 

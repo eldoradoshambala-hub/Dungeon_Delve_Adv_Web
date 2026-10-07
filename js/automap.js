@@ -71,6 +71,13 @@ function renderMap(ctx, W, H, L, px, py, face){
   ctx.font=`bold ${Math.max(9,Math.round(cs*0.62))}px serif`;
   if(L.up && seen(L.up.x,L.up.y)) ctx.fillText('▲', X(L.up.x)+cs/2, Y(L.up.y)+cs/2+1);
   if(L.down && seen(L.down.x,L.down.y)) ctx.fillText('▼', X(L.down.x)+cs/2, Y(L.down.y)+cs/2+1);
+  /* 見つけた宝箱（開けたものは描かない） */
+  L.rooms.forEach(r=>{
+    const c=r.chest; if(!c || c.opened || !seen(c.x,c.y)) return;
+    const s=Math.max(3,cs*0.34);
+    ctx.fillStyle='#b8862a'; ctx.strokeStyle=MAP_INK; ctx.lineWidth=1;
+    ctx.fillRect(X(c.x)+cs/2-s/2, Y(c.y)+cs/2-s/2.6, s, s*0.75); ctx.strokeRect(X(c.x)+cs/2-s/2, Y(c.y)+cs/2-s/2.6, s, s*0.75);
+  });
   if(L.goal>=0){
     const r=L.rooms[L.goal];
     if(r && r.seen){ ctx.fillStyle='#9a2a22'; ctx.fillText('★', X(r.x)+r.w*cs/2, Y(r.y)+r.h*cs/2+1); }

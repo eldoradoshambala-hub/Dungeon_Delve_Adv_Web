@@ -17,7 +17,8 @@ let lastKey=0;
 document.addEventListener('keydown', e=>{
   if(e.ctrlKey || e.metaKey || e.altKey) return;
   const k=e.key;
-  if(MODE==='dungeon'){
+  if(e.target && e.target.tagName==='INPUT') return;          // 名前の入力中
+  if(MODE==='dungeon' && !campOpen){
     if(KEYMAP[k]){
       e.preventDefault();
       const now=performance.now();
@@ -31,12 +32,13 @@ document.addEventListener('keydown', e=>{
     if(k==='Enter' || k===' '){
       if(document.activeElement && document.activeElement.tagName==='BUTTON') return;
       e.preventDefault();
-      if(onDown()) descend(); else if(onUp()) ascend();
+      if(onDown()) descend(); else if(onUp()) ascend(); else if(chestHere()) chestMenu();
       return;
     }
     if(k==='m' || k==='M'){ toggleMapPanel(); return; }
+    if(k==='c' || k==='C'){ camp(); return; }
   }
-  if((k==='v' || k==='V') && !e.repeat){ toggleStyle(); if(MODE==='title') title(); }
+  if((k==='v' || k==='V') && !e.repeat && MODE!=='combat'){ toggleStyle(); if(MODE==='title') title(); }
 });
 
 /* ---------- 操作盤（押した瞬間に動く。押しっぱなしで歩き続ける） ---------- */

@@ -10,8 +10,9 @@ const DUNGEONS=[
  {id:2,name:'沈んだ神殿',       diff:3, floors:5, rec:5,  d:'湿地に半ば沈んだ異教の神殿。死者が歩く。'},
  {id:3,name:'竜骨の迷宮',       diff:4, floors:6, rec:7,  d:'巨大な骨で組まれた迷宮。中央に何かが眠る。'},
  {id:4,name:'深淵の門',         diff:5, floors:7, rec:10, d:'世界の裂け目。帰還した者は数えるほどしかいない。'},
- {id:5,name:'古井戸の底',       diff:0, floors:2, rec:1,
-  d:'村の外れの涸れ井戸。狭すぎて群れは通れない。初めての潜行に。'},
+ /* 入門用。narrow：狭くて敵は2体までしか来ない／noTrap：罠が一切ない */
+ {id:5,name:'古井戸の底',       diff:0, floors:2, rec:1, narrow:true, noTrap:true,
+  d:'村の外れの涸れ井戸。狭すぎて群れは通れず、仕掛けを施した者もいない。初めての潜行に。'},
  {id:6,name:'凍てつく王城',     diff:6, floors:8,  rec:13,
   d:'万年雪に埋もれた巨人の城。広間ひとつが村ほどもあり、住人はそれに見合う背丈をしている。'},
  {id:7,name:'黒曜の尖塔',       diff:7, floors:9,  rec:17,

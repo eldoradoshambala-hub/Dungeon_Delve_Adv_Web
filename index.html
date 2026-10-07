@@ -28,11 +28,12 @@
   </section>
 
   <aside id="side">
+    <section id="party" aria-label="パーティ"></section>
     <section id="mapwrap">
       <h3 class="panelhead">地図 <small>1マス＝10フィート</small></h3>
       <canvas id="map" aria-label="自動地図"></canvas>
+      <div id="status"></div>
     </section>
-    <section id="status"></section>
   </aside>
 
   <section id="logwrap"><div id="log"></div></section>
@@ -53,10 +54,16 @@
 <!-- 通常の script 読み込み（type="module" にしない）：PC でダブルクリックして開いても動くように -->
 <script src="js/rng.js"></script>
 <script src="js/data.js"></script>
+<script src="js/rules.js"></script>
 <script src="js/maze.js"></script>
 <script src="js/view3d.js"></script>
+<script src="js/monart.js"></script>
 <script src="js/automap.js"></script>
+<script src="js/ui.js"></script>
 <script src="js/game.js"></script>
+<script src="js/party.js"></script>
+<script src="js/town.js"></script>
+<script src="js/combat.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

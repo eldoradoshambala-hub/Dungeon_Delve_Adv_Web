@@ -154,6 +154,38 @@ function genLevel(dg, floorNo, seed){
   return L;
 }
 
+/* 部屋に番人と宝箱を置く。迷路と同じ種から続けて振るので、同じ冒険なら同じ配置になる。
+   頭数は遭遇したときのパーティの強さで決めるので、ここでは種類だけ決める */
+function populateLevel(L, dg, floorNo){
+  const diff=dg.diff, pool=monsterPool(diff, floorNo);
+  const startRoom=L.room[L.up.y*L.w+L.up.x];
+  const isStair=(x,y)=>(L.up.x===x&&L.up.y===y) || (L.down && L.down.x===x && L.down.y===y);
+  L.rooms.forEach((r,i)=>{
+    r.foes=null; r.chest=null; r.cleared=false;
+    if(i===startRoom) return;                       // 上り階段の部屋は安全
+    const goal = i===L.goal;
+    const mChance = goal || r.k==='guard' ? 1 : 0.30 + diff*0.03 + floorNo*0.02;
+    if(chance(mChance)){
+      const m = goal ? pickBoss(diff,floorNo) : pick(pool);
+      r.foes = {mid:m.id, boss:goal, escort: goal ? pick(pool).id : null};
+    }
+    const cChance = goal ? 1 : (r.foes ? 0.55 : 0.15) + diff*0.02;
+    if(chance(cChance)){
+      const cells=[];
+      for(let y=r.y;y<r.y+r.h;y++) for(let x=r.x;x<r.x+r.w;x++) if(!isStair(x,y)) cells.push({x,y});
+      if(!cells.length) return;
+      const c=pick(cells);
+      r.chest={x:c.x, y:c.y, locked:chance(0.55), trapped:!dg.noTrap && chance(0.30+diff*0.04),
+               quality: goal?3:1, opened:false};
+    }
+  });
+}
+/* そのマスにある（まだ開けていない／開けた）宝箱 */
+function chestAt(L,x,y){
+  for(const r of L.rooms) if(r.chest && r.chest.x===x && r.chest.y===y) return r.chest;
+  return null;
+}
+
 /* 隠し扉を通らずに行ける距離（到達できないマスは -1） */
 function bfs(L, sx, sy, allowSecret){
   const dist=new Array(L.w*L.h).fill(-1);
