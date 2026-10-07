@@ -1,0 +1,2 @@
+# リポジトリ内は LF に統一する（Windows / Mac / Linux 間で差分が出ないように）
+* text=auto eol=lf

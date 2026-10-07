@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DD Adv">
+<meta name="theme-color" content="#110f0d">
+<title>Dungeon Delve Adv</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>DUNGEON DELVE <span>ADV</span></h1>
+    <button class="tab" id="tabMap" type="button">地図</button>
+    <div class="chips" id="chips"></div>
+  </header>
+
+  <section id="viewwrap">
+    <div id="frame">
+      <canvas id="view" aria-label="一人称の迷宮の眺め"></canvas>
+      <div id="compass"></div>
+      <div id="ahead"></div>
+    </div>
+  </section>
+
+  <aside id="side">
+    <section id="mapwrap">
+      <h3 class="panelhead">地図 <small>1マス＝10フィート</small></h3>
+      <canvas id="map" aria-label="自動地図"></canvas>
+    </section>
+    <section id="status"></section>
+  </aside>
+
+  <section id="logwrap"><div id="log"></div></section>
+
+  <footer>
+    <div id="pad">
+      <button type="button" data-k="tl">↶<small>左を向く</small></button>
+      <button type="button" data-k="fw">▲<small>進む</small></button>
+      <button type="button" data-k="tr">↷<small>右を向く</small></button>
+      <button type="button" data-k="sl">◀<small>横へ</small></button>
+      <button type="button" data-k="bk">▼<small>下がる</small></button>
+      <button type="button" data-k="sr">▶<small>横へ</small></button>
+    </div>
+    <div id="acts"></div>
+  </footer>
+</div>
+
+<!-- 通常の script 読み込み（type="module" にしない）：PC でダブルクリックして開いても動くように -->
+<script src="js/rng.js"></script>
+<script src="js/data.js"></script>
+<script src="js/maze.js"></script>
+<script src="js/view3d.js"></script>
+<script src="js/automap.js"></script>
+<script src="js/game.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

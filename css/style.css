@@ -1,0 +1,188 @@
+:root{
+  --bg:#110f0d; --panel:#1a1714; --panel2:#221e19; --line:#3a3227;
+  --ink:#ddd2c1; --dim:#9a8f7e; --gold:#d4a548; --gold2:#8a6a2c; --red:#c8574a;
+  --grn:#86b065; --blu:#86a6d6;
+  --serif:"Yu Mincho","YuMincho","Hiragino Mincho ProN","Noto Serif JP","MS PMincho",serif;
+  --sans:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{
+  background:var(--bg) radial-gradient(ellipse at 50% 0%,#221c15 0%,var(--bg) 60%) no-repeat;
+  color:var(--ink); font-family:var(--sans); font-size:15px; line-height:1.65;
+  overscroll-behavior:none; -webkit-text-size-adjust:100%;
+}
+button{font-family:inherit}
+
+/* ---------- 全体の割り付け（PC：左に眺めと記録、右に地図と状態） ---------- */
+#app{
+  display:grid; height:100vh; height:100dvh; max-width:1240px; margin:0 auto;
+  grid-template-columns:minmax(0,1fr) 330px;
+  grid-template-rows:auto auto minmax(0,1fr) auto;
+  grid-template-areas:"head head" "view side" "log side" "foot side";
+  column-gap:12px;
+  padding:0 12px 0;
+  padding-left:max(12px,env(safe-area-inset-left)); padding-right:max(12px,env(safe-area-inset-right));
+}
+header{grid-area:head}
+#viewwrap{grid-area:view}
+#side{grid-area:side}
+#logwrap{grid-area:log}
+footer{grid-area:foot}
+
+header{
+  display:flex; align-items:center; gap:10px; padding:8px 2px;
+  padding-top:calc(8px + env(safe-area-inset-top));
+  border-bottom:1px solid var(--line); margin-bottom:10px;
+}
+header h1{font-family:var(--serif); font-size:17px; margin:0; color:var(--gold); letter-spacing:.14em; white-space:nowrap; font-weight:600}
+header h1 span{color:var(--red); font-size:13px; letter-spacing:.2em; margin-left:2px}
+.chips{margin-left:auto; display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end}
+.chip{background:#2a241d; border:1px solid var(--line); border-radius:999px; padding:2px 10px; font-size:12px; white-space:nowrap}
+.chip b{color:var(--gold); font-weight:600}
+.chip.warn b{color:var(--red)}
+button.tab{display:none; background:#2a241d; border:1px solid var(--line); color:var(--ink); border-radius:6px; padding:6px 12px; font-size:13px; cursor:pointer; white-space:nowrap}
+button.tab.on{background:var(--gold); color:#221c12; border-color:var(--gold)}
+
+/* ---------- 眺め（枠付きの窓） ---------- */
+#viewwrap{display:flex; justify-content:center; min-height:0}
+#frame{
+  position:relative; aspect-ratio:4/3;
+  width:min(100%, calc((100vh - 330px) * 4 / 3));
+  width:min(100%, calc((100dvh - 330px) * 4 / 3)); min-width:280px;
+  border:3px double var(--gold2); border-radius:4px; background:#000;
+  box-shadow:0 0 0 1px #000, 0 0 0 5px #1d1914, 0 0 0 6px #4a3c26, 0 10px 30px rgba(0,0,0,.6);
+  overflow:hidden;
+}
+#frame::before,#frame::after{
+  content:""; position:absolute; width:10px; height:10px; transform:rotate(45deg);
+  background:var(--gold); top:-6px; z-index:2; box-shadow:0 0 0 2px #1d1914;
+}
+#frame::before{left:-6px} #frame::after{right:-6px}
+canvas#view{display:block; width:100%; height:100%; touch-action:none; cursor:grab}
+#compass{
+  position:absolute; top:6px; left:50%; transform:translateX(-50%);
+  font-family:var(--serif); font-size:13px; font-weight:600; letter-spacing:.2em;
+  color:#f2dfae; background:rgba(20,14,8,.72); border:1px solid #6b5326; border-radius:3px;
+  padding:0 8px 0 10px; pointer-events:none; white-space:nowrap;
+}
+#compass:empty{display:none}
+#ahead{
+  position:absolute; left:0; right:0; bottom:0; padding:14px 10px 5px;
+  background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.78));
+  font-size:12.5px; color:#d8ccb8; text-align:center; pointer-events:none;
+}
+#ahead:empty{display:none}
+#ahead em{font-style:normal; color:var(--gold)}
+
+/* ---------- 右列：地図と状態 ---------- */
+#side{display:flex; flex-direction:column; gap:10px; min-height:0; padding-bottom:10px}
+#mapwrap{background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:8px 10px 10px}
+.panelhead{margin:0 0 6px; font-family:var(--serif); font-size:12px; color:var(--gold); letter-spacing:.14em; font-weight:600}
+.panelhead small{color:var(--dim); font-weight:400; letter-spacing:.04em; margin-left:6px; font-family:var(--sans)}
+canvas#map{display:block; width:100%; aspect-ratio:1/1; border-radius:3px; box-shadow:inset 0 0 12px rgba(80,60,20,.35)}
+#status{background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:10px 12px; font-size:13px; overflow-y:auto; min-height:0}
+#status h3{margin:0 0 6px; font-family:var(--serif); font-size:12px; color:var(--gold); letter-spacing:.14em; border-bottom:1px solid var(--line); padding-bottom:3px}
+#status h3:not(:first-child){margin-top:12px}
+.kv{display:flex; justify-content:space-between; gap:8px; padding:1px 0}
+.kv span:last-child{color:#fff; text-align:right}
+.bar{height:6px; background:#2a241d; border-radius:3px; overflow:hidden; margin:3px 0 4px}
+.bar i{display:block; height:100%; background:linear-gradient(90deg,#8c4a1e,#e0a040)}
+.note{color:var(--dim); font-size:12px; margin:6px 0 0}
+.keys{display:grid; grid-template-columns:auto 1fr; gap:2px 10px; font-size:12px; color:var(--dim)}
+.keys kbd{font-family:ui-monospace,Consolas,monospace; color:var(--ink); background:#2a241d; border:1px solid var(--line); border-radius:3px; padding:0 4px; font-size:11px}
+
+/* ---------- 記録（冒険の記録） ---------- */
+#logwrap{
+  background:var(--panel); border:1px solid var(--line); border-radius:8px; margin-top:10px;
+  overflow-y:auto; padding:10px 14px; min-height:0; -webkit-overflow-scrolling:touch;
+}
+.l{margin:0 0 7px}
+.l.dm{font-family:var(--serif); font-size:15.5px; color:var(--ink)}
+.l.sys{color:var(--dim); font-size:12.5px; border-left:2px solid var(--line); padding-left:8px}
+.l.good{color:var(--grn)}
+.l.bad{color:var(--red)}
+.l.head{font-family:var(--serif); color:var(--gold); font-weight:600; border-bottom:1px solid var(--line); padding-bottom:3px; margin-top:12px; letter-spacing:.06em}
+.l.big{font-family:var(--serif); font-size:22px; color:var(--gold); text-align:center; margin:12px 0 2px; letter-spacing:.22em; font-weight:600}
+.l.sub{text-align:center; color:var(--dim); font-size:12.5px; margin-bottom:12px; letter-spacing:.08em}
+.l.dg{background:var(--panel2); border:1px solid var(--line); border-radius:6px; padding:6px 10px; font-size:13px}
+.l.dg b{font-family:var(--serif); color:var(--gold)}
+
+/* ---------- 操作盤 ---------- */
+footer{
+  display:flex; gap:10px; align-items:stretch; padding:10px 0;
+  padding-bottom:calc(10px + env(safe-area-inset-bottom));
+}
+#pad{display:grid; grid-template-columns:repeat(3,64px); grid-template-rows:repeat(2,48px); gap:5px; flex:0 0 auto}
+#pad button{
+  background:linear-gradient(#3a3127,#2a231c); border:1px solid #54463a; color:#f0e3c8; border-radius:7px;
+  font-size:18px; line-height:1; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  touch-action:manipulation; user-select:none; -webkit-user-select:none;
+}
+#pad button small{font-size:9.5px; color:var(--dim); letter-spacing:.02em}
+#pad button:active,#pad button.hit{background:linear-gradient(#5c4720,#3f3016); border-color:#8a6a2c}
+body:not(.in-dungeon) #pad{display:none}
+#acts{display:flex; flex-wrap:wrap; gap:7px; align-content:flex-start; flex:1 1 auto; min-width:0}
+.btn{
+  flex:1 1 auto; min-width:112px; background:linear-gradient(#332c23,#282219);
+  border:1px solid #4a3f31; color:var(--ink); border-radius:7px; padding:10px 12px;
+  font-size:14px; cursor:pointer; text-align:center; touch-action:manipulation;
+}
+.btn:hover{border-color:var(--gold); color:#fff}
+.btn small{display:block; font-size:11px; color:var(--dim); margin-top:2px}
+.btn.pri{background:linear-gradient(#5c4720,#3f3016); border-color:#8a6a2c; color:#fbecc8}
+.btn.dim{opacity:.75}
+.btn:disabled{opacity:.35; cursor:not-allowed}
+.btn.dgn{display:block; width:100%; text-align:left}
+.btn.dgn b{font-family:var(--serif); color:var(--gold); font-weight:600}
+.btn.dgn .st{color:var(--red); letter-spacing:.05em}
+
+/* ---------- 狭い画面（スマホ縦）：眺め／記録（または地図）／操作盤 の縦1列 ---------- */
+@media (max-width:880px){
+  #app{grid-template-columns:minmax(0,1fr); grid-template-rows:auto auto minmax(0,1fr) auto;
+       grid-template-areas:"head" "view" "log" "foot"; padding-left:max(8px,env(safe-area-inset-left)); padding-right:max(8px,env(safe-area-inset-right))}
+  header{padding-top:calc(5px + env(safe-area-inset-top)); padding-bottom:5px; margin-bottom:8px; gap:6px}
+  header h1{font-size:13px; letter-spacing:.08em}
+  header h1 span{font-size:11px}
+  .chip{padding:1px 7px; font-size:11px}
+  .chips{gap:4px}
+  button.tab{display:block; min-height:36px}
+  body:not(.in-dungeon) button.tab{display:none}
+  #frame{width:100%; min-width:0}
+  #side{display:none; grid-area:log; padding-bottom:0}
+  body.panel-map #side{display:flex; overflow-y:auto}
+  body.panel-map #logwrap{display:none}
+  #logwrap{margin-top:8px}
+  #side{margin-top:8px}
+  .l.dm{font-size:15px}
+  footer{flex-direction:column; gap:7px; padding-top:8px}
+  #pad{grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,50px)}
+  .btn{min-width:calc(50% - 4px); padding:11px 8px}
+}
+@media (max-width:880px), (max-height:520px) and (orientation:landscape){ .pc-only{display:none} }
+@media (max-width:420px){
+  header h1{font-size:0}
+  header h1::before{content:"DD"; font-size:14px; letter-spacing:.1em}
+  header h1 span{font-size:11px}
+}
+
+/* ---------- スマホ横：左に眺め、右に記録と操作盤 ---------- */
+@media (max-height:520px) and (orientation:landscape){
+  #app{grid-template-columns:auto minmax(0,1fr); grid-template-rows:auto minmax(0,1fr) auto;
+       grid-template-areas:"head head" "view log" "view foot"; max-width:none}
+  header{margin-bottom:6px}
+  #viewwrap{align-items:flex-start}
+  #frame{height:calc(100dvh - 60px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); width:auto; min-width:0}
+  #side{grid-area:log; margin-top:0}
+  #logwrap{margin-top:0}
+  button.tab{display:block}
+  body:not(.in-dungeon) button.tab{display:none}
+  #side{display:none}
+  body.panel-map #side{display:flex; overflow-y:auto}
+  body.panel-map #logwrap{display:none}
+  footer{padding-top:6px}
+  #pad{grid-template-columns:repeat(3,54px); grid-template-rows:repeat(2,42px)}
+  #pad button{padding:0}
+  #pad button small{font-size:9px; white-space:nowrap; letter-spacing:0}
+  .btn{min-width:90px; padding:8px 8px; font-size:13px}
+}
